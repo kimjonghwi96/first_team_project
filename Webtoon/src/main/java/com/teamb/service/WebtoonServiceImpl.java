@@ -96,6 +96,7 @@ public class WebtoonServiceImpl implements WebtoonService {
 			}
 		}
 
+		
 		// payment_code
 		if (webtoonSearch.getPayment_code().size() == 0) {
 			payment_code.add(1L);
