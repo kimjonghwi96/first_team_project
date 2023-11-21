@@ -312,6 +312,7 @@ public class WebtoonServiceImpl implements WebtoonService {
 		ArrayList<WTUploadVO> uploadList = new ArrayList<>();
 
 		for (Object element : jsonWTArr) {
+			
 			WTUploadVO upload = new WTUploadVO();
 
 			upload.setWebtoonId((Long) ((JSONObject) element).get("webtoonId"));// 같은 웹툰인데 다른 플랫폼인 것 합쳐야함(같은
@@ -320,6 +321,8 @@ public class WebtoonServiceImpl implements WebtoonService {
 
 			// 문자열
 			String data = (((String) ((JSONObject) element).get("author")).trim().replaceAll("^,|,$", "")).trim();
+			
+			System.out.println("-----------------------------------------" + data);
 
 			// 괄호 안의 콤마를 제외하고 밖의 콤마만으로 문자열을 분리
 			Pattern pattern = Pattern.compile("\\([^)]*\\)|,");
@@ -330,12 +333,13 @@ public class WebtoonServiceImpl implements WebtoonService {
 			while (matcher.find()) {
 				String match = matcher.group();
 				if (match.equals(",") && data.substring(start, matcher.start()) != "") {
-					authorSet.add(data.substring(start, matcher.start()));
+					authorSet.add(data.substring(start, matcher.start()).trim());
 					start = matcher.end();
 				}
 			}
 
-			authorSet.add(data.substring(start));
+			authorSet.add(data.substring(start).trim());
+			System.out.println("==================authorSet===================" + authorSet);
 			ArrayList<String> author = new ArrayList<>(authorSet);
 
 			upload.setAuthor(author);// 여러명이 묶여있는 json을 나눠야 함/완료
@@ -430,10 +434,10 @@ public class WebtoonServiceImpl implements WebtoonService {
 				List<WebtoonVO> WebtoonIdByTitle = w_mapper.selectWebtoonIdByTitle(webtoon_title);
 				for (WebtoonVO element : WebtoonIdByTitle) {
 					for (WebtoonVO element2 : w_mapper.getWebtoonPlatform(element.getWebtoon_id())) {
-if (platform_name.equals(element2.getPlatform_name())) {
-					webtoon_id1 = element.getWebtoon_id();
-}
-}
+						if (platform_name.equals(element2.getPlatform_name())) {
+											webtoon_id1 = element.getWebtoon_id();
+						}
+					}
 				}
 
 				// 웹툰아이디가 기존에 없고 같은 제목이 있지만 플랫폼이 같은게 없다-같은 웹툰(다른 플랫폼)
@@ -495,6 +499,8 @@ if (platform_name.equals(element2.getPlatform_name())) {
 							}
 						}
 					}
+					
+					System.out.println("author_point=======================================" + author_point);
 					///////////////////////////////////////// 겹치는 작가수가 가장 높은 웹툰의 아이디를 쓴다
 					int author_point_sum = 0;
 					for (Integer element : author_point) {
@@ -507,7 +513,7 @@ if (platform_name.equals(element2.getPlatform_name())) {
 						webtoon_id = webtoon_id2;///////////// 수정필요
 
 						// platformcharacter 테이블 insert
-						w_mapper.insertPlatformcharacter(webtoon_id, platform_name, url, 2L);
+//						w_mapper.insertPlatformcharacter(webtoon_id, platform_name, url, 2L);
 
 						// additional 테이블 update
 						w_mapper.updateAdditional(webtoon_id, platform_name, additional);
