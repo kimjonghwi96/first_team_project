@@ -96,7 +96,6 @@ public class WebtoonServiceImpl implements WebtoonService {
 			}
 		}
 
-		
 		// payment_code
 		if (webtoonSearch.getPayment_code().size() == 0) {
 			payment_code.add(1L);
@@ -306,22 +305,21 @@ public class WebtoonServiceImpl implements WebtoonService {
 		} catch (Exception e) {
 			System.out.println("JSON 파싱 중 오류가 발생했습니다: " + e.getMessage());
 		}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		WTUploadAdditionalVO uploadAdditionalVO = new WTUploadAdditionalVO();
 		ArrayList<WTUploadVO> uploadList = new ArrayList<>();
 
 		for (Object element : jsonWTArr) {
-			
+
 			WTUploadVO upload = new WTUploadVO();
 
 			upload.setWebtoonId((Long) ((JSONObject) element).get("webtoonId"));// 같은 웹툰인데 다른 플랫폼인 것 합쳐야함(같은
-																							// 제목이어도 다른 웹툰일 가능성 있음)
+																				// 제목이어도 다른 웹툰일 가능성 있음)
 			upload.setTitle(((String) ((JSONObject) element).get("title")).trim());
 
 			// 문자열
 			String data = (((String) ((JSONObject) element).get("author")).trim().replaceAll("^,|,$", "")).trim();
-			
+
 			System.out.println("-----------------------------------------" + data);
 
 			// 괄호 안의 콤마를 제외하고 밖의 콤마만으로 문자열을 분리
@@ -339,7 +337,6 @@ public class WebtoonServiceImpl implements WebtoonService {
 			}
 
 			authorSet.add(data.substring(start).trim());
-			System.out.println("==================authorSet===================" + authorSet);
 			ArrayList<String> author = new ArrayList<>(authorSet);
 
 			upload.setAuthor(author);// 여러명이 묶여있는 json을 나눠야 함/완료
@@ -348,21 +345,20 @@ public class WebtoonServiceImpl implements WebtoonService {
 
 			String service = (String) ((JSONObject) element).get("service");
 
-			upload.setService(service);// 영어로 된 json을 우리 테이블(한글)에 맞춰서 변환해야 함/완료
+			upload.setService(service);// 영어로 된 json을 우리 테이블(한글)에 맞춰서 변환해야 함
 
 			ArrayList<String> udd = (ArrayList<String>) ((JSONObject) element).get("updateDays");
 
 			upload.setUpdateDays(udd);// 영어로 된 json을 우리 테이블(한글)에 맞춰서 변환해야 함/완료
 
-			uploadAdditionalVO.setW_new1(
-					(Boolean) ((((JSONObject) ((JSONObject) element).get("additional")).get("new"))) ? "true"
+			uploadAdditionalVO
+					.setW_new1((Boolean) ((((JSONObject) ((JSONObject) element).get("additional")).get("new"))) ? "true"
 							: "false"); // Boolean형
-			uploadAdditionalVO.setRest1(
-					(Boolean) ((((JSONObject) ((JSONObject) element).get("additional")).get("rest"))) ? "true"
+			uploadAdditionalVO
+					.setRest1((Boolean) ((((JSONObject) ((JSONObject) element).get("additional")).get("rest"))) ? "true"
 							: "false"); // Boolean형
 			uploadAdditionalVO.setUp1(
-					(Boolean) ((((JSONObject) ((JSONObject) element).get("additional")).get("up"))) ? "true"
-							: "false"); // Boolean형
+					(Boolean) ((((JSONObject) ((JSONObject) element).get("additional")).get("up"))) ? "true" : "false"); // Boolean형
 			uploadAdditionalVO.setAdult1(
 					(Boolean) ((((JSONObject) ((JSONObject) element).get("additional")).get("adult"))) ? "true"
 							: "false"); // Boolean형
@@ -371,7 +367,6 @@ public class WebtoonServiceImpl implements WebtoonService {
 			uploadList.add(upload);
 		}
 
-//		System.out.println(uploadList);
 
 		// 작품 등록 및 수정
 		for (int i = 0; i < uploadList.size(); i++) {
@@ -384,7 +379,7 @@ public class WebtoonServiceImpl implements WebtoonService {
 			String platform_name = uploadList.get(i).getService();
 			ArrayList<String> weekday_day = uploadList.get(i).getUpdateDays();
 			WTUploadAdditionalVO additional = uploadList.get(i).getAdditional();
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 			// author 있는지 보고 추가 추가
 			for (String element : author_name) {
 				if (w_mapper.selectAuthor(element) == null) {
@@ -405,23 +400,19 @@ public class WebtoonServiceImpl implements WebtoonService {
 					w_mapper.insertWeekday(element);
 				}
 			}
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			// 웹툰아이디가 기존에 존재할 때
 			if (w_mapper.selectWebtoonId(webtoon_id) != null) {
 
 				// additional 수정
-				w_mapper.updateAdditional(uploadList.get(i).getWebtoonId(), uploadList.get(i).getService(),
-						uploadList.get(i).getAdditional());
+				w_mapper.updateAdditional(webtoon_id, platform_name, additional);
 			}
 
 			// 업로드하는 작품명의 웹툰 아이디 리스트 추출
 			// 추출된 웹툰 아이디 리스트의 하나의 플랫폼 리스트 추출
 			// 플랫폼 리스트와 업로드 작품 플랫폼 비교
 
-			// 윁툰아이디가 없고, 같은 제목이 있을 때///////////////////////////////////////////////////////
-			// 다시 고칠 부분
-			////////////////////////////////////////////////////////////////////////////////////////
+			// 윁툰아이디가 없고, 같은 제목이 있을 때
 			else if (!w_mapper.selectWebtoonIdByTitle(webtoon_title).isEmpty()) {
 
 				// 업로드하는 웹툰의 플랫폼이 기존 같은 제목 웹툰이 가진 플랫폼에 속하는지
@@ -435,31 +426,22 @@ public class WebtoonServiceImpl implements WebtoonService {
 				for (WebtoonVO element : WebtoonIdByTitle) {
 					for (WebtoonVO element2 : w_mapper.getWebtoonPlatform(element.getWebtoon_id())) {
 						if (platform_name.equals(element2.getPlatform_name())) {
-											webtoon_id1 = element.getWebtoon_id();
+							webtoon_id1 = element.getWebtoon_id();
 						}
 					}
 				}
 
 				// 웹툰아이디가 기존에 없고 같은 제목이 있지만 플랫폼이 같은게 없다-같은 웹툰(다른 플랫폼)
 				if (webtoon_id1 == 0L) {
-					// webtoon 테이블 insert
-//					if (w_mapper.selectWebtoonIdByTitle(uploadList.get(i).getTitle()) == null) {
-//						w_mapper.insertWebtoon(webtoon_id, webtoon_title, thumbnail);
-//					}
+					System.out.println("1===============================================" + webtoon_title);
 
-					webtoon_id = WebtoonIdByTitle.get(0).getWebtoon_id();///////////// 수정필요
+					webtoon_id = WebtoonIdByTitle.get(0).getWebtoon_id();
 
 					// platformcharacter 테이블 insert
 					w_mapper.insertPlatformcharacter(webtoon_id, platform_name, url, 2L);
 
 					// additional 테이블 update
 					w_mapper.updateAdditional(webtoon_id, platform_name, additional);
-
-					// webtoon_ranking 테이블 insert
-//					w_mapper.ranking_new(webtoon_id);
-
-					// wt_gen 디폴트값(수정으로 직접 넣을 예정)
-//					w_mapper.insertWT_gen(webtoon_id, "기타");
 
 					// wt_aut 테이블 insert
 					for (String element : author_name) {
@@ -475,69 +457,39 @@ public class WebtoonServiceImpl implements WebtoonService {
 				// 웹툰아이디가 기존에 없고 같은 제목이 있고 플랫폼이 같은게 있다
 				// 같은 작가를 공유하면 같은 웹툰/ 아니면 별개의 웹툰
 				else {
-					ArrayList<Integer> author_point = new ArrayList<>();
+					System.out.println("2===============================================" + webtoon_title);
 
-					Long webtoon_id2 = w_mapper.selectWebtoonIdByTitle(webtoon_title).get(0).getWebtoon_id();
+					if (w_mapper.similarAuthorWT(webtoon_title, author_name) != null) {
+						if (w_mapper.similarAuthorWT(webtoon_title, author_name).getAuthor_count() > 0L) {
+							webtoon_id = w_mapper.similarAuthorWT(webtoon_title, author_name).getWebtoon_id();
+							w_mapper.updateAdditional(webtoon_id, platform_name, additional);
+						} else {
+							// webtoon 테이블 insert
+							w_mapper.insertWebtoon(webtoon_id, webtoon_title, thumbnail);
 
-					for (int j = 0; j < (w_mapper.getWebtoonAuthor(webtoon_id,
-							w_mapper.selectPlatform(platform_name).getPlatform_code())).size(); j++) {
-						author_point.add(j, 0);
+							// platformcharacter 테이블 insert
+							w_mapper.insertPlatformcharacter(webtoon_id, platform_name, url, 2L);
 
-						for (int k = 0; k < author_name.size(); k++) {
-							if (author_name.get(k)
-									.equals((w_mapper.getWebtoonAuthor(webtoon_id,
-											w_mapper.selectPlatform(platform_name).getPlatform_code())).get(j)
-											.getAuthor_name())) {
-								author_point.set(j, author_point.get(j) + 1);
+							// additional 테이블 update
+							w_mapper.updateAdditional(webtoon_id, platform_name, additional);
+
+							// webtoon_ranking 테이블 insert
+							w_mapper.ranking_new(webtoon_id);
+
+							// wt_gen 디폴트값(수정으로 직접 넣을 예정)
+							w_mapper.insertWT_gen(webtoon_id, "기타");
+
+							// wt_aut 테이블 insert
+							for (String element : author_name) {
+								w_mapper.insertWt_aut(webtoon_id, platform_name, element);
+							}
+
+							// wt_wd_pl 테이블 insert
+							for (String element : weekday_day) {
+								w_mapper.insertWt_wd_pl(webtoon_id, element, platform_name);
 							}
 						}
-						// author_point를 array로 만들고 j번째에 포인트 저장
-						// array중 가장 높은 값의 웹툰에 병합
-						if (j > 0) {
-							if (author_point.get(j) > author_point.get(j - 1)) {
-								webtoon_id2 = w_mapper.selectWebtoonIdByTitle(webtoon_title).get(j).getWebtoon_id();
-							}
-						}
-					}
-					
-					System.out.println("author_point=======================================" + author_point);
-					///////////////////////////////////////// 겹치는 작가수가 가장 높은 웹툰의 아이디를 쓴다
-					int author_point_sum = 0;
-					for (Integer element : author_point) {
-						author_point_sum = author_point_sum + element;
-					}
-					// 작가가 겹칠 때
-					if (author_point_sum > 0) {
-						System.out.println(webtoon_id);
-
-						webtoon_id = webtoon_id2;///////////// 수정필요
-
-						// platformcharacter 테이블 insert
-//						w_mapper.insertPlatformcharacter(webtoon_id, platform_name, url, 2L);
-
-						// additional 테이블 update
-						w_mapper.updateAdditional(webtoon_id, platform_name, additional);
-
-						// webtoon_ranking 테이블 insert
-//						w_mapper.ranking_new(webtoon_id);
-
-						// wt_gen 디폴트값(수정으로 직접 넣을 예정)
-//						w_mapper.insertWT_gen(webtoon_id, "기타");
-
-						// wt_aut 테이블 insert
-						for (String element : author_name) {
-							w_mapper.insertWt_aut(webtoon_id, platform_name, element);
-
-						}
-
-						// wt_wd_pl 테이블 insert
-						for (String element : weekday_day) {
-							w_mapper.insertWt_wd_pl(webtoon_id, element, platform_name);
-						}
-
 					} else {
-						System.out.println(">>>>>>>>>>>>>>>>>>>>>> " + author_point);
-
 						// webtoon 테이블 insert
 						w_mapper.insertWebtoon(webtoon_id, webtoon_title, thumbnail);
 
@@ -562,11 +514,12 @@ public class WebtoonServiceImpl implements WebtoonService {
 						for (String element : weekday_day) {
 							w_mapper.insertWt_wd_pl(webtoon_id, element, platform_name);
 						}
+
 					}
+
 				}
 
 			}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// 웹툰아이디가 기존에 존재하지 않고 같은 제목도 없을 때
 			else {
 

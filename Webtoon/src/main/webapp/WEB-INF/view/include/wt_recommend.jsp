@@ -5,7 +5,7 @@
 
 <section class="py-5">
 	<h1>
-		<b>작가의 다른 작품</b>
+		<b>비슷한 작품</b>
 	</h1>
 	<hr>
 	<div class="container px-4 px-lg-5 mt-5">
@@ -16,28 +16,52 @@
 
 
 
-			<c:forEach items="${WTSimilar}" var="WTSimilar">
+<%-- 			<c:forEach items="${WTSimilar}" var="WTSimilar"> --%>
 
-				<div class="col mb-5">
-					<div class="card h-100">
-						<img style="height: 300px; width: 300px;"
-							class="card-img-top img-thumbnail"
-							src="<c:out value="${WTSimilar.thumbnail}"/>" alt="..." />
-						<div class="card-body p-4">
-							<div class="text-center">
-								<h5 class="fw-bolder">
-									<c:out value="${WTSimilar.webtoon_title}" />
-								</h5>
-								<div class="d-grid gap-2">
-									<a class="btn btn-outline-primary mt-auto"
-										href='/page/wt_detail?webtoon_id=<c:out value="${WTSimilar.webtoon_id}"/>&platform_code=<c:out value="${WTSimilar.min_platform_code}"/>'>상세보기</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+<!-- 				<div class="col mb-5"> -->
+<!-- 					<div class="card h-100"> -->
+<!-- 						<img style="height: 300px; width: 300px;" -->
+<!-- 							class="card-img-top img-thumbnail" -->
+<%-- 							src="<c:out value="${WTSimilar.thumbnail}"/>" alt="..." /> --%>
+<!-- 						<div class="card-body p-4"> -->
+<!-- 							<div class="text-center"> -->
+<!-- 								<h5 class="fw-bolder"> -->
+<%-- 									<c:out value="${WTSimilar.webtoon_title}" /> --%>
+<!-- 								</h5> -->
+<!-- 								<div class="d-grid gap-2"> -->
+<!-- 									<a class="btn btn-outline-primary mt-auto" -->
+<%-- 										href='/page/wt_detail?webtoon_id=<c:out value="${WTSimilar.webtoon_id}"/>&platform_code=<c:out value="${WTSimilar.min_platform_code}"/>'>상세보기</a> --%>
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
 
-			</c:forEach>
+<%-- 			</c:forEach> --%>
+
+
+<c:forEach items="${WTSimilar}" var="WTSimilar" varStatus="loopStatus">
+    <c:if test="${loopStatus.index < 12}">
+        <div class="col mb-5">
+            <div class="card h-100">
+                <img style="height: 300px; width: 300px;"
+                    class="card-img-top img-thumbnail"
+                    src="<c:out value="${WTSimilar.thumbnail}"/>" alt="..." />
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <h5 class="fw-bolder">
+                            <c:out value="${WTSimilar.webtoon_title}" />
+                        </h5>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-outline-primary mt-auto"
+                                href='/page/wt_detail?webtoon_id=<c:out value="${WTSimilar.webtoon_id}"/>&platform_code=<c:out value="${WTSimilar.min_platform_code}"/>'>상세보기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </c:if>
+</c:forEach>
 
 
 
@@ -51,7 +75,7 @@
 
 
 	<h1>
-		<b>비슷한 작품</b>
+		<b>작가의 다른 작품</b>
 	</h1>
 	<hr>
 	<div class="container px-4 px-lg-5 mt-5">

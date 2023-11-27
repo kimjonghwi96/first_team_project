@@ -20,7 +20,7 @@ public class WebtoonVO {
 	private Long weekday_code;
 	private String weekday_day;
 	
-
+	private Long author_count;
 	
 	private String user_id;
 	private String name;

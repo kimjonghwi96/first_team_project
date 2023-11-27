@@ -9,15 +9,25 @@
 <!-- </form> -->
 
 
+
+<title></title>
+<form action="wt_json_file_upload" method="post"
+	enctype="multipart/form-data">
+	<input type="file" name="jsonFile"> <input type="submit"
+		value="Upload JSON File">
+</form>
+
+
 <div class="card">
 	<div class="card-header"></div>
 	<div class="card-body">
 
-		<form action="wt_json_upload" method="post"  enctype="multipart/form-data">
-		
-		<textarea rows="30" cols="200" name="WTJson"></textarea>
-		<br>
-		<button type="submit">등록</button>
+		<form action="wt_json_upload" method="post"
+			enctype="multipart/form-data">
+
+			<textarea rows="30" cols="200" name="WTJson"></textarea>
+			<br>
+			<button type="submit">등록</button>
 		</form>
 	</div>
 </div>

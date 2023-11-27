@@ -175,105 +175,46 @@ public class WTController {
 
 		model.addAttribute("cmtList", w_service.cmtList(webtoon_id));
 
-//		response.sendRedirect("/wt_detail");
-
 		return commentSuccess;
 	}
 
 	@GetMapping("/wt_json_upload")
 	public void wt_json_upload() {
-		
+
 	}
+
 	@GetMapping("/wt_json_file_upload")
 	public void wt_json_file_upload() {
-		
+
 	}
 
 	@PostMapping("/wt_json_upload")
 	public ResponseEntity<String> wt_json_upload(String WTJson) {
-		
+
 		w_service.uploadWebtoonByJson(WTJson);
-		return new ResponseEntity<>("json 전송/", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("json String upload/", HttpStatus.BAD_REQUEST);
 
 	}
+
 	@PostMapping("/wt_json_file_upload")
-	public ResponseEntity<String> wt_json_file_upload(
-			@RequestParam("jsonFile") MultipartFile file) {
-		
-//		System.out.println(WTJson);
-		
-		
-		
-		 if (!file.isEmpty()) {
-		        try {
-		            
-	                ObjectMapper objectMapper = new ObjectMapper();
-	                JsonNode jsonNode = objectMapper.readTree(file.getBytes());
-	                w_service.uploadWebtoonByJson(jsonNode.toString());
-//	                System.out.println(jsonNode);
+	public ResponseEntity<String> wt_json_file_upload(@RequestParam("jsonFile") MultipartFile file) {
 
+		if (!file.isEmpty()) {
+			try {
+				ObjectMapper objectMapper = new ObjectMapper();
+				JsonNode jsonNode = objectMapper.readTree(file.getBytes());
+				w_service.uploadWebtoonByJson(jsonNode.toString());
 
-//	                System.out.println("Parsed JSON Data: " + jsonNode.toString());
-		            return new ResponseEntity<>("File uploaded and processed successfully", HttpStatus.OK);
-		        } catch (IOException e) {
-		            return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-		        }
-		    } else {
-		        return new ResponseEntity<>("File upload failed: File is empty", HttpStatus.BAD_REQUEST);
-		    }
-		
-		
-//		w_service.uploadWebtoonByJson(WTJson);
-//		
-//		return new ResponseEntity<>("json 전송/", HttpStatus.BAD_REQUEST);
-
-//		
-//		JSONParser parser = new JSONParser();
-//
-//		ObjectMapper objectMapper = new ObjectMapper();
-//
-//		try {
-//			JsonNode jsonNode = objectMapper.readTree(WTJson);
-//
-//			if (jsonNode.isObject()) {
-//				System.out.println("이것은 JSON 객체입니다.");
-//
-//				JSONObject jsonWT = (JSONObject) parser.parse(WTJson);
-//
-//			} else if (jsonNode.isArray()) {
-//				System.out.println("이것은 JSON 배열입니다.");
-//			} else {
-//				System.out.println("이것은 유효한 JSON 형식이 아닙니다.");
-//			}
-//		} catch (Exception e) {
-//			System.out.println("JSON 파싱 중 오류가 발생했습니다: " + e.getMessage());
-//		}
-//		 JSONParser parser = new JSONParser();
-//		 JSONObject jsonWT = (JSONObject) parser.parse(WTJson);
-//		 
-//		 
-//		 JSONArray webtoonsArray = (JSONArray) jsonWT.get("webtoons");
-//		 jsonWT = (JSONA) jsonWT.get("webtoons");
-//		 System.out.println("webtoonsArray 는 " + webtoonsArray);
-//		 System.out.println("&&&&&&&&&&&&&& " + jsonWT.get("webtoons"));
-//		 if((JSONObject) jsonWT.get("webtoons") != null) {
-//			 jsonWT = (JSONObject) jsonWT.get("webtoons");
-//		 }
-//		 
-//		 WTUploadVO upload = new WTUploadVO();
-//		 upload.setWebtoonId((Long) jsonWT.get("webtoonId"));
-//		 upload.setAuthor((String) jsonWT.get("author"));
-//		 upload.setUrl((String) jsonWT.get("url"));
-//		 upload.setUrl((String) jsonWT.get("img"));
-//		 upload.setUrl((String) jsonWT.get("service"));
-//		 System.out.println(jsonWT);
-//		 System.out.println(jsonWT.get("webtoonId"));
-//		 System.out.println(((JSONObject) jsonWT.get("additional")).get("new"));
-		
+				return new ResponseEntity<>("File uploaded and processed successfully", HttpStatus.OK);
+			} catch (IOException e) {
+				return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+			}
+		} else {
+			return new ResponseEntity<>("File upload failed: File is empty", HttpStatus.BAD_REQUEST);
+		}
 	}
-	
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	@GetMapping("/wtcmt_modify")
 	public void wtcmt_modify() {
 
@@ -312,18 +253,17 @@ public class WTController {
 
 	@GetMapping("/wt_delete")
 	public String wt_delete(Long webtoon_id, HttpSession session) {
-		System.out.println("=========================="+webtoon_id);
-		
+		System.out.println("==========================" + webtoon_id);
+
 		MemberVO member = (MemberVO) session.getAttribute("member");
-		
-		
+
 		if (member == null) {
 			return "/page/memberlogin";
-			
+
 		} else if (member != null && 1 == Long.valueOf(member.getAdmin_code()))
-			
+
 			w_service.wt_delete(webtoon_id);
-		
+
 		return "redirect:/page/main";
 	}
 

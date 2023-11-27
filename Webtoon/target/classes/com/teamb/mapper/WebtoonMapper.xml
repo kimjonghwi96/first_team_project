@@ -523,6 +523,40 @@ SET wr.webtoon_ranking = (SELECT rnk
 	</insert>
 	
 	
+<!-- 	<select id="similarAuthorWT" -->
+<!-- 		resultType="com.teamb.domain.WebtoonVO"> -->
+<!-- SELECT webtoon_id, author_count -->
+<!-- FROM ( -->
+<!--     SELECT a.webtoon_id, COUNT(c.author_id) AS author_count -->
+<!--     FROM webtoon a -->
+<!--     JOIN wt_aut b ON a.webtoon_id = b.webtoon_id -->
+<!--     JOIN author c ON b.author_id = c.author_id -->
+<!--     WHERE a.webtoon_title = #{webtoon_title} AND c.author_name IN #{author_name} -->
+<!--     GROUP BY a.webtoon_id -->
+<!--     ORDER BY author_count DESC -->
+<!-- ) -->
+<!-- WHERE ROWNUM = 1 -->
+<!-- 	</select> -->
+
+<select id="similarAuthorWT" resultType="com.teamb.domain.WebtoonVO">
+    SELECT webtoon_id, author_count
+    FROM (
+        SELECT a.webtoon_id, COUNT(c.author_id) AS author_count
+        FROM webtoon a
+        JOIN wt_aut b ON a.webtoon_id = b.webtoon_id
+        JOIN author c ON b.author_id = c.author_id
+        WHERE a.webtoon_title = #{webtoon_title} AND c.author_name IN
+        <foreach collection="author_name" item="author" open="(" separator="," close=")">
+            #{author}
+        </foreach>
+        GROUP BY a.webtoon_id
+        ORDER BY author_count DESC
+    )
+    WHERE ROWNUM = 1
+</select>
+
+	
+	
 	
 	
 	

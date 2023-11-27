@@ -111,6 +111,7 @@ public interface WebtoonMapper {
 	public void insertWT_gen(@Param("webtoon_id") Long webtoon_id, @Param("genre_name") String genre_name);
 	
 
+	public WebtoonVO similarAuthorWT(@Param("webtoon_title") String webtoon_title,@Param("author_name")  ArrayList<String> author_name);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,6 +127,7 @@ public interface WebtoonMapper {
 	public void wt_delete(Long webtoon_id);
 	
 	public List<WebtoonVO> SimilarWT(Long webtoon_id);
+
 
 
 

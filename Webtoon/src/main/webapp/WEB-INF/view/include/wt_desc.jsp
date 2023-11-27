@@ -174,7 +174,6 @@
 			success : function(isLiked) {
 
 				if (document.getElementById("User_id").value != "") {
-//if(isLiked == 0L)
 					if (toggleButton1.classList.contains("active")) {
 						// 버튼 비활성화
 						toggleButton1.classList.remove("active");
@@ -189,9 +188,7 @@
 					}
 				} else {
 					alert("로그인을 해주세요.");
-					location.reload();
 				}
-				location.reload();
 			},
 			error : function(xhr, textStatus, errorThrown) {
 				// 서버 요청 자체가 실패한 경우 (예: 네트워크 문제 등)
@@ -232,7 +229,6 @@
 				} else {
 					alert("로그인을 해주세요.");
 				}
-				location.reload();
 			},
 			error : function(xhr, textStatus, errorThrown) {
 				// 서버 요청 자체가 실패한 경우 (예: 네트워크 문제 등)

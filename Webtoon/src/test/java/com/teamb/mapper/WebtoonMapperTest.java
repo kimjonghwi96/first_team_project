@@ -23,8 +23,21 @@ public class WebtoonMapperTest {
 
 	@Setter(onMethod_ = @Autowired)
 	private WebtoonMapper w_mapper;
-
+	
 	@Test
+	public void testUpload2() {
+		String webtoon_title = "나혼렙";
+		ArrayList<String> author_name = new ArrayList<>();
+		author_name.add("bbb");
+		author_name.add("ccc");
+		author_name.add("ddd");
+		author_name.add("ggg");
+		
+		w_mapper.similarAuthorWT(webtoon_title, author_name);
+		
+	}
+
+//	@Test
 	public void testUpload() {
 //		System.out.println(w_mapper.selectWebtoonId(1L));
 
