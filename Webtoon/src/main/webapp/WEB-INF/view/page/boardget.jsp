@@ -20,10 +20,11 @@
     <link href="css/styles.css" rel="stylesheet" />
     
     <!-- 헤더  -->
-    <%@ include file="../include/boardheader.jsp" %>
+    <%@ include file="../include/menu.jsp" %>
     <!-- 제이 쿼리  -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>.hidden {display: none;}</style>  <!-- 글번호 ui 에서 숨기기 -->
+    <!-- 글번호 ui 에서 숨기기 -->
+    <style>.hidden {display: none;}</style>
     </head>
 <body class="bg-gradient-primary">
 
@@ -90,7 +91,11 @@
                   		<form id='operForm' action="page/boardmodify" method="get"> <!-- get이다 수정창 띄우는거니까 -->
                   			<input type='hidden' id='board_num' name='board_num' value='<c:out value="${board.board_num}"/>'>
                   		</form>
-                  
+                  		<hr>
+                  			
+<!--                   			댓글 인클루두 하기 -->
+<%-- 							<%@ include file="../include/reply.jsp" %> --%>
+                  			
                     </div>
                     <!-- end panel-body -->
                 </div>
@@ -102,51 +107,54 @@
         
     </div>
     
-	<script type="text/javascript">
-	    $(function() {
-	        // 서버로부터 로그인 상태와 사용자 정보를 가져옵니다.
-	        $.get("/page/isLoggedIn", function(response) {
-	            // 사용자가 로그인 상태인 경우
-	            if(response.loggedIn) {
-	                var loggedInUserId = response.user_id;
-	                var adminCode = response.admin_code;
-	                var postUserId = '<c:out value="${board.user_id }"/>';
+<!--     버튼 처리 스크립트 -->
+   	<script>
+	    $(document).ready(function() {
+	        // 서버로부터 로그인 정보 가져오기
+	        $.ajax({
+	            url: '/page/isLoggedIn',
+	            type: 'GET',
+	            dataType: 'json',
+	            success: function(response) {
+	                const loggedInUserId = response.user_id;
+	                const adminCode = response.admin_code;
+	                const authorId = $("input[name='user_id']").val(); // 글쓴이 ID
 	
-	                // 사용자가 관리자인 경우
-	                if(adminCode === "1") {
-	                    // 관리자는 모든 글에 대해 삭제 버튼을 볼 수 있습니다.
+	                // 관리자 체크
+	                if (parseInt(adminCode) === 1) {   // parseInt(adminCode) === 1 문자열로 반환되어도 일치하면 넘겨주기
+	                    // 관리자는 모든 글에 대해 삭제 버튼 표시
 	                    $("button[data-oper='remove']").show();
 	
-	                    // 관리자이면서 본인이 작성한 글인 경우 수정 버튼도 볼 수 있습니다.
-	                    if(loggedInUserId === postUserId) {
+	                    // 관리자이면서 본인이 작성한 글인 경우 수정 버튼 표시
+	                    if (loggedInUserId === authorId) {
 	                        $("button[data-oper='modify']").show();
 	                    } else {
-	                        // 본인이 작성하지 않은 글은 수정 버튼을 숨깁니다.
+	                        // 본인이 작성하지 않은 글은 수정 버튼 숨김
 	                        $("button[data-oper='modify']").hide();
 	                    }
-	                } else {
-	                    // 일반 사용자는 본인이 작성한 글에 대해 수정 및 삭제 버튼을 볼 수 있습니다.
-	                    if(loggedInUserId === postUserId) {
+	                } else if (loggedInUserId) {
+	                    // 일반 사용자는 본인이 작성한 글에 대해 수정 및 삭제 버튼 표시
+	                    if (loggedInUserId === authorId) {
 	                        $("button[data-oper='modify']").show();
 	                        $("button[data-oper='remove']").show();
 	                    } else {
-	                        // 본인이 작성하지 않은 글은 수정 및 삭제 버튼을 숨깁니다.
+	                        // 본인이 작성하지 않은 글은 수정 및 삭제 버튼 숨김
 	                        $("button[data-oper='modify']").hide();
 	                        $("button[data-oper='remove']").hide();
 	                    }
+	                } else {
+	                    // 로그인하지 않은 사용자는 모든 버튼 숨김
+	                    $("button[data-oper='modify']").hide();
+	                    $("button[data-oper='remove']").hide();
 	                }
-	            } else {
-	                // 로그인하지 않은 사용자는 수정 및 삭제 버튼을 볼 수 없도록 숨깁니다.
-	                $("button[data-oper='modify']").hide();
-	                $("button[data-oper='remove']").hide();
+	            },
+	            error: function(error) {
+	                console.log('Error: ', error);
 	            }
 	        });
 	    });
 	</script>
 
-
-
-   
     
 </body>
 </html>

@@ -46,10 +46,7 @@ public class WTController {
 
 	@GetMapping("/main")
 	public void main(Model model) {
-
-//		model.addAttribute("WTInit", w_service.getList(1, webtoonSearch));
 		model.addAttribute("WTInit", w_service.getWebtoonList());
-
 		model.addAttribute("GenreButton", w_service.getSearchGenreButton());
 		model.addAttribute("PlatformButton", w_service.getSearchPlatformButton());
 		model.addAttribute("PaymentButton", w_service.getSearchPaymentButton());
@@ -62,9 +59,6 @@ public class WTController {
 
 	@PostMapping("/main")
 	public void search2(Model model, WebtoonSearchVO2 webtoonSearch) {
-
-//		model.addAttribute("WTInit", w_service.getList(2, webtoonSearch));
-
 		model.addAttribute("WTInit", w_service.getWebtoonSearch(webtoonSearch));
 		model.addAttribute("GenreButton", w_service.getSearchGenreButton());
 		model.addAttribute("PlatformButton", w_service.getSearchPlatformButton());
@@ -72,9 +66,6 @@ public class WTController {
 		model.addAttribute("WeekdayButton", w_service.getSearchWeekdayButton());
 
 		model.addAttribute("Check", webtoonSearch);
-
-		log.info("---->" + webtoonSearch);
-
 	}
 
 	@GetMapping("/wt_detail")

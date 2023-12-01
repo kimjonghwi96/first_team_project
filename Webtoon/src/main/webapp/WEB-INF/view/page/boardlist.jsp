@@ -23,16 +23,12 @@
 
 <body>
     <!-- 메뉴 -->
-    <div style="height: 300px; margin: 0 auto; width: 70%; margin-top: 100px; margin-bottom: 500px;">
+    <div style="height: 300px; margin: 0 auto; width: 70%; margin-bottom: 250px;">
         <!-- 보드 컨텐츠 -->
         <div id="content" class="container-fluid">
             <h1 class="h1 mb-2 text-gray-800"><b>자유 게시판</b></h1>
             <p class="mb-4">모두가 소통하는 공간입니다. 서로 존중해주세요<br> 선정적이거나 부적절한 콘텐츠 광고성 게시글의 경우 무통보 삭제입니다.</p>
             <hr>
-            <div style="height: 300px; auto; width: 100%; margin-top: 20px;">
-                <%@include file="../include/carousel.jsp" %>
-            </div>
-            <br>
             <div class="mb-4">
                 <div class="card-header py-3"></div>
                 <div class="card-body"style="margin-top: 20px; margin-bottom: 20px;">
@@ -70,6 +66,10 @@
                 </div>
             </div>
         </div>
+        	<div style="height: 300px; auto; width: 100%; margin-top: 20px;">
+                <%@include file="../include/carousel.jsp" %>
+            </div>
+            <br>
         <hr>
         <%@include file="../include/footer.jsp" %> 
         <!-- 보드 컨텐츠 종료합니다. -->
@@ -101,27 +101,31 @@
     </script>
     
 <!--     글쓰기 버튼 스크립트 -->
-    <script>
-	    document.addEventListener("DOMContentLoaded", function() {
-	        var writeButton = document.getElementById("writeButton");
-	        
-	        fetch('/page/isLoggedIn')
-	            .then(response => response.json())
-	            .then(data => {
-	                // 'data.loggedIn' 속성을 사용하여 로그인 상태를 확인합니다. 컨트롤러 보기
-	                var isLoggedIn = data.loggedIn;
-	                
-	                // 로그인 상태가 아니라면 글쓰기 버튼을 숨깁니다.
-	                if (!isLoggedIn) {
-	                    writeButton.style.display = 'none';
+   <script>
+	    $(document).ready(function() {
+	        // 로그인 상태 확인을 위한 AJAX 요청
+	        $.ajax({
+	            url: '/page/isLoggedIn',
+	            type: 'GET',
+	            dataType: 'json',
+	            success: function(response) {
+	                // 로그인 상태 확인
+	                if (response.loggedIn) {
+	                    // 로그인 상태일 때 글쓰기 버튼 표시
+	                    $("#writeButton").show();
+	                } else {
+	                    // 비로그인 상태일 때 글쓰기 버튼 숨김
+	                    $("#writeButton").hide();
 	                }
-	            }).catch(error => {
-	                // 에러가 발생했을 때 콘솔에 로그를 찍습니다.
-	                console.error('Error fetching the login status:', error);
-	            });
-	        
-	        writeButton.addEventListener("click", function() {
-	            window.location.href = './boardregister';
+	            },
+	            error: function(error) {
+	                console.log('Error: ', error);
+	            }
+	        });
+	
+	        // 글쓰기 버튼 클릭 이벤트 처리
+	        $("#writeButton").click(function() {
+	            window.location.href = '/page/boardregister'; // 등록 페이지로 이동
 	        });
 	    });
 	</script>
